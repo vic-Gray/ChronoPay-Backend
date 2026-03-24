@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { validateRequiredFields } from "./middleware/validation";
+import slotsRouter from "./routes/slots.js"
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -26,27 +26,8 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "chronopay-backend" });
 });
 
-app.get("/api/v1/slots", (_req, res) => {
-  res.json({ slots: [] });
-});
-
-app.post(
-  "/api/v1/slots",
-  validateRequiredFields(["professional", "startTime", "endTime"]),
-  (req, res) => {
-    const { professional, startTime, endTime } = req.body;
-
-    res.status(201).json({
-      success: true,
-      slot: {
-        id: 1,
-        professional,
-        startTime,
-        endTime,
-      },
-    });
-  },
-);
+// Slots resource — GET /api/v1/slots and POST /api/v1/slots
+app.use("/api/v1/slots", slotsRouter);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {

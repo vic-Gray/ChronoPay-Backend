@@ -23,6 +23,10 @@ cd chronopay-backend
 # Install dependencies
 npm install
 
+# Configure environment variables
+cp .env.example .env
+# Edit .env and set JWT_SECRET to a strong random value
+
 # Build
 npm run build
 

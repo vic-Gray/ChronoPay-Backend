@@ -101,11 +101,20 @@ const options = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: { title: "ChronoPay API", version: "1.0.0" },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
   apis: ["./src/index.ts"], // adjust if needed
 };
 
-const specs = swaggerJsdoc(options);
+const specs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 /**
@@ -150,6 +159,7 @@ app.get("/api/v1/slots", (_req, res) => {
 app.use(errorLoggerMiddleware);
 app.post(
   "/api/v1/slots",
+  authenticateToken, // auth first: reject unauthenticated requests before validation
   validateRequiredFields(["professional", "startTime", "endTime"]),
   (req, res) => {
     const { professional, startTime, endTime } = req.body;
